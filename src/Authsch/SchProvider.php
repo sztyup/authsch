@@ -24,7 +24,7 @@ class SchProvider extends AbstractProvider
 
     public function __construct(Request $request, $clientId, $clientSecret, $redirectUrl)
     {
-        parent::__construct($request, $clientId, $clientSecret, route(config("authsch.driver.redirect_route")));
+        parent::__construct($request, $clientId, $clientSecret, route(config("authsch.driver.redirect")));
     }
 
     protected function getAuthUrl($state)
