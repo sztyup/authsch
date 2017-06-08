@@ -3,6 +3,7 @@
 namespace Sztyup\Authsch;
 
 use Illuminate\Routing\Controller;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
