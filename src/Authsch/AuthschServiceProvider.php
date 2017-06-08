@@ -13,13 +13,13 @@ class AuthschServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . "/../routes/routes.php");
 
         $this->mergeConfigFrom(
-            __DIR__.'/config/config.php', 'authsch'
+            __DIR__.'/../config/config.php', 'authsch'
         );
     }
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/config/config.php' => config_path('authsch.php')
+            __DIR__ . '/../config/config.php' => config_path('authsch.php')
         ]);
     }
 }
