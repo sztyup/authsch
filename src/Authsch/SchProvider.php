@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Providers;
+namespace Sztyup\Authsch;
 
-use Illuminate\Http\Request;
 use Laravel\Socialite\Two\AbstractProvider;
-use Laravel\Socialite\Two\ProviderInterface;
 use Laravel\Socialite\Two\User;
 
 class SchProvider extends AbstractProvider
@@ -22,14 +20,6 @@ class SchProvider extends AbstractProvider
     ];
 
     protected $scopeSeparator = ' ';
-
-    public function __construct(Request $request, $clientId, $clientSecret, $redirectUrl)
-    {
-        if (!app()->environment('local'))
-            $this->scopes[] = 'niifPersonOrgID';
-
-        parent::__construct($request, $clientId, $clientSecret, $redirectUrl);
-    }
 
     protected function getAuthUrl($state)
     {
