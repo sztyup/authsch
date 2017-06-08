@@ -12,7 +12,7 @@ return [
     'driver' => [
         'client_id' => env("AUTHSCH_CLIENT_ID"),
         'client_secret' => env("AUTHSCH_CLIENT_ID"),
-        'redirect_url' => route('authsch.callback')
+        'redirect_route' => 'authsch.callback'
     ],
 
     'update_when_login' => false,

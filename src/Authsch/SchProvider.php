@@ -2,6 +2,7 @@
 
 namespace Sztyup\Authsch;
 
+use Illuminate\Http\Request;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\User;
 
@@ -20,6 +21,11 @@ class SchProvider extends AbstractProvider
     ];
 
     protected $scopeSeparator = ' ';
+
+    public function __construct(Request $request, $clientId, $clientSecret, $redirectUrl)
+    {
+        parent::__construct($request, $clientId, $clientSecret, route(config("authsch.driver.redirect_route")));
+    }
 
     protected function getAuthUrl($state)
     {
