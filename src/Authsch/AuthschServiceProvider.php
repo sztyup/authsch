@@ -21,5 +21,15 @@ class AuthschServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/config.php' => config_path('authsch.php')
         ]);
+
+        $socialite = $this->app->make('Laravel\Socialite\Contracts\Factory');
+        $socialite->extend(
+            'authsch',
+            function ($app) use ($socialite) {
+                $config = $app['config']['authsch.driver'];
+                return $socialite->buildProvider(SchProvider::class, $config);
+            }
+        );
+
     }
 }
