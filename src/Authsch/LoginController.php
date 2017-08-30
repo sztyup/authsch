@@ -20,7 +20,7 @@ class LoginController extends Controller
 
         $userClass = $config["user"]["class"];
 
-        $user = $userClass::where("email", $provided_user->email)->get();
+        $user = $userClass::where("email", $provided_user->email)->first();
         if($user == null) { //No user with that email exists in the DB, create one
             $user = new $userClass;
 
