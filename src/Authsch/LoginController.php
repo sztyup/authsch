@@ -39,7 +39,7 @@ class LoginController extends Controller
             $user->save();
         }
 
-        Auth::login($user);
+        \Auth::login($user);
 
         return redirect()->route($config["redirect_route"]);
     }

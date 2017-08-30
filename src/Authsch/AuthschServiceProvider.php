@@ -16,6 +16,7 @@ class AuthschServiceProvider extends ServiceProvider
             __DIR__.'/../config/config.php', 'authsch'
         );
     }
+
     public function boot()
     {
         $this->publishes([
