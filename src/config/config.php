@@ -2,7 +2,7 @@
 
 return [
     'user' => [
-        'class' => \App\User::class,
+        'class' => \App\Models\User::class,
         'fields' => [
             'name' => 'name',
             'email' => 'email'
