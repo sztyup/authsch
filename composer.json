@@ -15,5 +15,12 @@
     "psr-4": {
       "Sztyup\\Authsch\\": "src/Authsch"
     }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Sztyup\\Authsch\\AuthschServiceProvider"
+      ]
+    }
   }
 }
