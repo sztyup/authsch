@@ -8,8 +8,6 @@ class AuthschServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->make('Sztyup\Authsch\LoginController');
-
         $this->loadRoutesFrom(__DIR__ . "/../routes/routes.php");
 
         $this->mergeConfigFrom(
