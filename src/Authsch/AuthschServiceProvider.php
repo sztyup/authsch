@@ -2,6 +2,8 @@
 
 namespace Sztyup\Authsch;
 
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
 
 class AuthschServiceProvider extends ServiceProvider
@@ -24,9 +26,12 @@ class AuthschServiceProvider extends ServiceProvider
         $socialite = $this->app->make('Laravel\Socialite\Contracts\Factory');
         $socialite->extend(
             'authsch',
-            function ($app) use ($socialite) {
-                $config = $app['config']['authsch.driver'];
-                return $socialite->buildProvider(SchProvider::class, $config);
+            function (Container $app) {
+                return new SchProvider(
+                    $app->make('request'),
+                    $app->make(UrlGenerator::class),
+                    $app->make('config')->get('authsch')
+                );
             }
         );
 
