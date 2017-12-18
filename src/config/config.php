@@ -12,10 +12,12 @@ return [
     'driver' => [
         'client_id' => env("AUTHSCH_CLIENT_ID"),
         'client_secret' => env("AUTHSCH_CLIENT_SECRET"),
-        'redirect' => 'authsch.callback'
+        'redirect' => 'authsch.callback' // Route where a callback route is found
     ],
 
-    'update_when_login' => false,
+    'scopes' => [
+
+    ],
 
     'redirect_route' => 'home'
 ];
