@@ -2,29 +2,19 @@
 
 namespace Sztyup\Authsch;
 
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Two\AbstractProvider;
-use Laravel\Socialite\Two\User;
 
 class SchProvider extends AbstractProvider
 {
-    protected $scopes = [
-        'basic',
-        'displayName',
-        'sn',
-        'givenName',
-        'mail',
-        'eduPersonEntitlement',
-        'bmeunitscope',
-        'linkedAccounts',
-        'mobile'
-    ];
-
     protected $scopeSeparator = ' ';
 
-    public function __construct(Request $request, $clientId, $clientSecret, $redirectUrl)
+    public function __construct(Request $request, UrlGenerator $router, array $config)
     {
-        parent::__construct($request, $clientId, $clientSecret, route(config("authsch.driver.redirect")));
+        $this->setScopes($config['scopes']);
+
+        parent::__construct($request, $config['client_id'], $config['client_secret'], $router->route($config['redirect']));
     }
 
     protected function getAuthUrl($state)
@@ -43,6 +33,7 @@ class SchProvider extends AbstractProvider
             parent::getTokenFields($code), 'grant_type', 'authorization_code'
         );
     }
+
     protected function getUserByToken($token)
     {
         $userUrl = 'https://auth.sch.bme.hu/api/profile?access_token=' . $token;
@@ -56,11 +47,26 @@ class SchProvider extends AbstractProvider
 
     protected function mapUserToObject(array $user)
     {
-        $result = new User();
+        $result = new SchUser();
 
-        $result->name = $user["displayName"];
-        $result->email = $user["mail"];
-        $result->provider_user_id = $user["internal_id"];
+        $mapping = [
+            'displayName' => 'displayName',
+            'sn' => 'lastName',
+            'givenName' => 'firstName',
+            'mail' => 'email',
+            'niifPersonOrgID' => 'neptun',
+            'mobile' => 'mobile',
+            'eduPersonEntitlement' => 'circles',
+            'entrants' => 'entrants',
+            'niifEduPersonAttendedCourse' => 'courses',
+            'admembership' => 'admembership'
+        ];
+
+        foreach($mapping as $from => $to) {
+            if(in_array($from, $user)) {
+                $result->$to = $user[$from];
+            }
+        }
 
         if(isset($user["linkedAccounts"])) {
             if(isset($user["linkedAccounts"]["schacc"])) {
@@ -79,36 +85,23 @@ class SchProvider extends AbstractProvider
             $result->room_number = $user["roomNumber"]["roomNumber"];
         }
 
-        if(isset($user["niifPersonOrgID"])) {
-            $result->neptun = $user["niifPersonOrgID"];
-        }
-
-        if(isset($user["mobile"])) {
-            $result->phone = $user["mobile"];
-        }
-
-        if(isset($user["eduPersonEntitlement"])) {
-            $result->circles = $user["eduPersonEntitlement"];
-        }
-
         if(isset($user["bmeunitscope"])) {
             if(in_array("BME_VIK_NEWBIE", $user["bmeunitscope"])) {
-                $result->bme_status = 4;
+                $result->bme_status = SchUser::BME_STATUS_NEWBIE;
             }
             elseif(in_array("BME_VIK_ACTIVE", $user["bmeunitscope"])) {
-                $result->bme_status = 3;
+                $result->bme_status = SchUser::BME_STATUS_VIK_ACTIVE;
             }
             elseif(in_array("BME_VIK", $user["bmeunitscope"])) {
-                $result->bme_status = 2;
+                $result->bme_status = SchUser::BME_STATUS_VIK_PASSIVE;
             }
             elseif(in_array("BME", $user["bmeunitscope"])) {
-                $result->bme_status = 1;
+                $result->bme_status = SchUser::BME_STATUS_BME;
             }
             else {
-                $result->bme_status = 0;
+                $result->bme_status = SchUser::BME_STATUS_NONE;
             }
         }
-
 
         return $result;
     }
