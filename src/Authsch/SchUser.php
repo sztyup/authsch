@@ -67,7 +67,7 @@ class SchUser
 
     public function getField($name)
     {
-        if(!$this->fields->has($name)) {
+        if (!$this->fields->has($name)) {
             throw new InvalidFieldException($name);
         }
 

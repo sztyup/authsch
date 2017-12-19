@@ -63,7 +63,7 @@ class SchProvider extends AbstractProvider
         ];
 
         foreach ($mapping as $from => $to) {
-            if(in_array($from, $user)) {
+            if (in_array($from, $user)) {
                 $result->setField($to, $user[$from]);
             }
         }
@@ -86,19 +86,15 @@ class SchProvider extends AbstractProvider
         }
 
         if (isset($user["bmeunitscope"])) {
-            if(in_array("BME_VIK_NEWBIE", $user["bmeunitscope"])) {
+            if (in_array("BME_VIK_NEWBIE", $user["bmeunitscope"])) {
                 $result->setField('bme_status', SchUser::BME_STATUS_NEWBIE);
-            }
-            elseif (in_array("BME_VIK_ACTIVE", $user["bmeunitscope"])) {
+            } elseif (in_array("BME_VIK_ACTIVE", $user["bmeunitscope"])) {
                 $result->setField('bme_status', SchUser::BME_STATUS_VIK_ACTIVE);
-            }
-            elseif (in_array("BME_VIK", $user["bmeunitscope"])) {
+            } elseif (in_array("BME_VIK", $user["bmeunitscope"])) {
                 $result->setField('bme_status', SchUser::BME_STATUS_VIK_PASSIVE);
-            }
-            elseif (in_array("BME", $user["bmeunitscope"])) {
+            } elseif (in_array("BME", $user["bmeunitscope"])) {
                 $result->setField('bme_status', SchUser::BME_STATUS_BME);
-            }
-            else {
+            } else {
                 $result->setField('bme_status', SchUser::BME_STATUS_NONE);
             }
         }
