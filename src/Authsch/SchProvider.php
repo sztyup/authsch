@@ -12,7 +12,7 @@ class SchProvider extends AbstractProvider
 
     public function __construct(Request $request, UrlGenerator $router, array $config)
     {
-        $this->setScopes($config['scopes']);
+        $this->setScopes(array_merge(['basic'], $config['scopes']));
 
         parent::__construct($request, $config['client_id'], $config['client_secret'], $router->route($config['redirect']));
     }
@@ -62,44 +62,44 @@ class SchProvider extends AbstractProvider
             'admembership' => 'admembership'
         ];
 
-        foreach($mapping as $from => $to) {
+        foreach ($mapping as $from => $to) {
             if(in_array($from, $user)) {
-                $result->$to = $user[$from];
+                $result->setField($to, $user[$from]);
             }
         }
 
-        if(isset($user["linkedAccounts"])) {
-            if(isset($user["linkedAccounts"]["schacc"])) {
-                $result->schacc = $user["linkedAccounts"]["schacc"];
+        if (isset($user["linkedAccounts"])) {
+            if (isset($user["linkedAccounts"]["schacc"])) {
+                $result->setField('schacc', $user["linkedAccounts"]["schacc"]);
             }
 
-            if(isset($user["linkedAccounts"]["bme"])) {
-                $result->bme_id = $user["linkedAccounts"]["bme"];
-                $arr = explode("@", $result->bme_id);
-                $result->bme_id = $arr[0];
+            if (isset($user["linkedAccounts"]["bme"])) {
+                $result->setField('bme_id', $user["linkedAccounts"]["bme"]);
+                $arr = explode("@", $result->getField('bme_id'));
+                $result->setField('bme_id', $arr[0]);
             }
         }
 
-        if(isset($user["roomNumber"])) {
-            $result->dormitory = $user["roomNumber"]["dormitory"];
-            $result->room_number = $user["roomNumber"]["roomNumber"];
+        if (isset($user["roomNumber"])) {
+            $result->setField('dormitory', $user["roomNumber"]["dormitory"]);
+            $result->setField('room_number', $user["roomNumber"]["roomNumber"]);
         }
 
-        if(isset($user["bmeunitscope"])) {
+        if (isset($user["bmeunitscope"])) {
             if(in_array("BME_VIK_NEWBIE", $user["bmeunitscope"])) {
-                $result->bme_status = SchUser::BME_STATUS_NEWBIE;
+                $result->setField('bme_status', SchUser::BME_STATUS_NEWBIE);
             }
-            elseif(in_array("BME_VIK_ACTIVE", $user["bmeunitscope"])) {
-                $result->bme_status = SchUser::BME_STATUS_VIK_ACTIVE;
+            elseif (in_array("BME_VIK_ACTIVE", $user["bmeunitscope"])) {
+                $result->setField('bme_status', SchUser::BME_STATUS_VIK_ACTIVE);
             }
-            elseif(in_array("BME_VIK", $user["bmeunitscope"])) {
-                $result->bme_status = SchUser::BME_STATUS_VIK_PASSIVE;
+            elseif (in_array("BME_VIK", $user["bmeunitscope"])) {
+                $result->setField('bme_status', SchUser::BME_STATUS_VIK_PASSIVE);
             }
-            elseif(in_array("BME", $user["bmeunitscope"])) {
-                $result->bme_status = SchUser::BME_STATUS_BME;
+            elseif (in_array("BME", $user["bmeunitscope"])) {
+                $result->setField('bme_status', SchUser::BME_STATUS_BME);
             }
             else {
-                $result->bme_status = SchUser::BME_STATUS_NONE;
+                $result->setField('bme_status', SchUser::BME_STATUS_NONE);
             }
         }
 

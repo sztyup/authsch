@@ -2,40 +2,28 @@
 
 namespace Sztyup\Authsch;
 
+use Illuminate\Support\Collection;
+use Sztyup\Authsch\Exceptions\InvalidFieldException;
+
 class SchUser
 {
-    public $provider_user_id;
+    protected $provider_user_id;
 
-    public $token;
-    public $refreshToken;
+    protected $token;
+    protected $refreshToken;
 
-    public $displayName;
-    public $lastName;
-    public $firstName;
-    public $email;
-
-    public $schacc = null;
-    public $bme_id = null;
-    public $bme_status = null;
-
-    public $dormitory = null;
-    public $room_number = null;
-
-    public $neptun = null;
-
-    public $phone = null;
-
-    public $circles = [];
-    public $entrants = [];
-    public $courses = [];
-
-    public $admembership = [];
+    protected $fields;
 
     const BME_STATUS_NEWBIE = 4;
     const BME_STATUS_VIK_ACTIVE = 3;
     const BME_STATUS_VIK_PASSIVE = 2;
     const BME_STATUS_BME = 1;
     const BME_STATUS_NONE = 0;
+
+    public function __construct()
+    {
+        $this->fields = new Collection();
+    }
 
     /**
      * @param $token
@@ -68,5 +56,21 @@ class SchUser
     public function setExpiresIn($time)
     {
         return $this;
+    }
+
+    public function setField($name, $value)
+    {
+        $this->fields->put($name, $value);
+
+        return $this;
+    }
+
+    public function getField($name)
+    {
+        if(!$this->fields->has($name)) {
+            throw new InvalidFieldException($name);
+        }
+
+        return $this->fields->get($name);
     }
 }
