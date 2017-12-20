@@ -35,5 +35,16 @@ class AuthschServiceProvider extends ServiceProvider
                 );
             }
         );
+
+        $socialite->extend(
+            'authsch-bme',
+            function (Container $app) {
+                return new BmeProvider(
+                    $app->make('request'),
+                    $app->make(UrlGenerator::class),
+                    $app->make('config')->get('authsch')
+                );
+            }
+        );
     }
 }
