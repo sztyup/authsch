@@ -14,7 +14,12 @@ class SchProvider extends AbstractProvider
     {
         $this->setScopes(array_merge(['basic'], $config['scopes']));
 
-        parent::__construct($request, $config['client_id'], $config['client_secret'], $router->route($config['redirect']));
+        parent::__construct(
+            $request,
+            $config['client_id'],
+            $config['client_secret'],
+            $router->route($config['redirect'])
+        );
     }
 
     protected function getAuthUrl($state)
@@ -30,7 +35,9 @@ class SchProvider extends AbstractProvider
     protected function getTokenFields($code)
     {
         return array_add(
-            parent::getTokenFields($code), 'grant_type', 'authorization_code'
+            parent::getTokenFields($code),
+            'grant_type',
+            'authorization_code'
         );
     }
 
