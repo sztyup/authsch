@@ -15,6 +15,7 @@ class SchAccount extends Model implements UserInterface
         'access_token',
         'refresh_token',
         'name',
+        'email',
         'bme_id',
         'bme_status',
         'dormitory',
