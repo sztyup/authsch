@@ -24,10 +24,19 @@ class SchProvider extends AbstractProvider
 
         parent::__construct(
             $request,
-            $config['client_id'],
-            $config['client_secret'],
-            $router->route($config['redirect'])
+            $config['driver']['client_id'],
+            $config['driver']['client_secret'],
+            $this->getRedirectRoute($config['driver']['redirect'], $router)
         );
+    }
+
+    protected function getRedirectRoute($config, UrlGenerator $router)
+    {
+        if (is_array($config)) {
+            return $router->route($config[0], $config[1]);
+        } else {
+            return $router->route($config);
+        }
     }
 
     public function user()
@@ -35,7 +44,7 @@ class SchProvider extends AbstractProvider
         /** @var SchUser $user */
         $user = parent::user();
 
-        $shacc =  $this->shaccFromUser($user);
+        $shacc = $this->shaccFromUser($user);
 
         $this->dispatcher->dispatch(new AuthSchLogin($user, $shacc));
 
@@ -46,17 +55,20 @@ class SchProvider extends AbstractProvider
     {
         $matchFields = [
             'provider_user_id',
-            'shacc',
+            'schacc',
             'neptun',
             'bme_id'
         ];
 
         foreach ($matchFields as $field) {
-            if ($user->$field == null || empty($user->$field)) {
+            if (!$user->hasField($field)) {
+                continue;
+            }
+            if ($user->getField($field) == null || empty($user->getField($field))) {
                 continue;
             }
 
-            $shacc = SchAccount::where($field, $user->$field)->first();
+            $shacc = SchAccount::where($field, $user->getField($field))->first();
 
             if ($shacc) {
                 return $shacc;
@@ -101,7 +113,7 @@ class SchProvider extends AbstractProvider
         $result = new SchUser($user['internal_id']);
 
         $mapping = [
-            'displayName' => 'displayName',
+            'displayName' => 'name',
             'sn' => 'lastName',
             'givenName' => 'firstName',
             'mail' => 'email',
@@ -114,7 +126,7 @@ class SchProvider extends AbstractProvider
         ];
 
         foreach ($mapping as $from => $to) {
-            if (in_array($from, $user)) {
+            if (array_key_exists($from, $user)) {
                 $result->setField($to, $user[$from]);
             }
         }
