@@ -12,6 +12,8 @@ class CreateSchAccountsTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->string('provider_user_id');
+            $table->string('name');
+            $table->string('email');
             $table->string('schacc');
             $table->string('access_token');
             $table->string('refresh_token');
