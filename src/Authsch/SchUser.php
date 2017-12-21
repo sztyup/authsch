@@ -20,27 +20,26 @@ class SchUser
     const BME_STATUS_BME = 1;
     const BME_STATUS_NONE = 0;
 
-    public function __construct()
+    public function __construct($id)
     {
         $this->fields = new Collection();
+
+        $this->provider_user_id = $id;
     }
 
-    /**
-     * @param $token
-     * @return SchUser
-     */
-    public function setToken($token)
+    public function getId(): string
+    {
+        return $this->provider_user_id;
+    }
+
+    public function setToken($token): SchUser
     {
         $this->token = $token;
 
         return $this;
     }
 
-    /**
-     * @param $token
-     * @return SchUser
-     */
-    public function setRefreshToken($token)
+    public function setRefreshToken($token): SchUser
     {
         $this->refreshToken = $token;
 
@@ -58,7 +57,7 @@ class SchUser
         return $this;
     }
 
-    public function setField($name, $value)
+    public function setField($name, $value): SchUser
     {
         $this->fields->put($name, $value);
 
@@ -72,5 +71,10 @@ class SchUser
         }
 
         return $this->fields->get($name);
+    }
+
+    public function toArray(): array
+    {
+        return $this->fields->toArray() + ['provider_user_id' => $this->provider_user_id];
     }
 }
