@@ -2,17 +2,25 @@
 
 namespace Sztyup\Authsch;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Two\AbstractProvider;
+use Sztyup\Authsch\Events\AuthSchLogin;
+use Sztyup\Authsch\Model\SchAccount;
 
 class SchProvider extends AbstractProvider
 {
     protected $scopeSeparator = ' ';
 
-    public function __construct(Request $request, UrlGenerator $router, array $config)
+    /** @var  Dispatcher */
+    private $dispatcher;
+
+    public function __construct(Request $request, UrlGenerator $router, Dispatcher $dispatcher, array $config)
     {
         $this->setScopes(array_merge(['basic'], $config['scopes']));
+
+        $this->dispatcher = $dispatcher;
 
         parent::__construct(
             $request,
@@ -20,6 +28,42 @@ class SchProvider extends AbstractProvider
             $config['client_secret'],
             $router->route($config['redirect'])
         );
+    }
+
+    public function user()
+    {
+        /** @var SchUser $user */
+        $user = parent::user();
+
+        $shacc =  $this->shaccFromUser($user);
+
+        $this->dispatcher->dispatch(new AuthSchLogin($user, $shacc));
+
+        return $shacc;
+    }
+
+    protected function shaccFromUser(SchUser $user)
+    {
+        $matchFields = [
+            'provider_user_id',
+            'shacc',
+            'neptun',
+            'bme_id'
+        ];
+
+        foreach ($matchFields as $field) {
+            if ($user->$field == null || empty($user->$field)) {
+                continue;
+            }
+
+            $shacc = SchAccount::where($field, $user->$field)->first();
+
+            if ($shacc) {
+                return $shacc;
+            }
+        }
+
+        return SchAccount::create($user->toArray());
     }
 
     protected function getAuthUrl($state)
@@ -54,7 +98,7 @@ class SchProvider extends AbstractProvider
 
     protected function mapUserToObject(array $user)
     {
-        $result = new SchUser();
+        $result = new SchUser($user['internal_id']);
 
         $mapping = [
             'displayName' => 'displayName',
@@ -75,31 +119,30 @@ class SchProvider extends AbstractProvider
             }
         }
 
-        if (isset($user["linkedAccounts"])) {
-            if (isset($user["linkedAccounts"]["schacc"])) {
-                $result->setField('schacc', $user["linkedAccounts"]["schacc"]);
+        if (isset($user['linkedAccounts'])) {
+            if (isset($user['linkedAccounts']['schacc'])) {
+                $result->setField('schacc', $user['linkedAccounts']['schacc']);
             }
 
-            if (isset($user["linkedAccounts"]["bme"])) {
-                $result->setField('bme_id', $user["linkedAccounts"]["bme"]);
-                $arr = explode("@", $result->getField('bme_id'));
+            if (isset($user['linkedAccounts']['bme'])) {
+                $arr = explode('@', $user['linkedAccounts']['bme']);
                 $result->setField('bme_id', $arr[0]);
             }
         }
 
-        if (isset($user["roomNumber"])) {
-            $result->setField('dormitory', $user["roomNumber"]["dormitory"]);
-            $result->setField('room_number', $user["roomNumber"]["roomNumber"]);
+        if (isset($user['roomNumber'])) {
+            $result->setField('dormitory', $user['roomNumber']['dormitory']);
+            $result->setField('room_number', $user['roomNumber']['roomNumber']);
         }
 
-        if (isset($user["bmeunitscope"])) {
-            if (in_array("BME_VIK_NEWBIE", $user["bmeunitscope"])) {
+        if (isset($user['bmeunitscope'])) {
+            if (in_array('BME_VIK_NEWBIE', $user['bmeunitscope'])) {
                 $result->setField('bme_status', SchUser::BME_STATUS_NEWBIE);
-            } elseif (in_array("BME_VIK_ACTIVE", $user["bmeunitscope"])) {
+            } elseif (in_array('BME_VIK_ACTIVE', $user['bmeunitscope'])) {
                 $result->setField('bme_status', SchUser::BME_STATUS_VIK_ACTIVE);
-            } elseif (in_array("BME_VIK", $user["bmeunitscope"])) {
+            } elseif (in_array('BME_VIK', $user['bmeunitscope'])) {
                 $result->setField('bme_status', SchUser::BME_STATUS_VIK_PASSIVE);
-            } elseif (in_array("BME", $user["bmeunitscope"])) {
+            } elseif (in_array('BME', $user['bmeunitscope'])) {
                 $result->setField('bme_status', SchUser::BME_STATUS_BME);
             } else {
                 $result->setField('bme_status', SchUser::BME_STATUS_NONE);
