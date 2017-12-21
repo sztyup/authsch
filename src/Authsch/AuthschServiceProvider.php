@@ -3,6 +3,7 @@
 namespace Sztyup\Authsch;
 
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,6 +34,7 @@ class AuthschServiceProvider extends ServiceProvider
                 return new SchProvider(
                     $app->make('request'),
                     $app->make(UrlGenerator::class),
+                    $app->make(Dispatcher::class),
                     $app->make('config')->get('authsch')
                 );
             }
@@ -44,6 +46,7 @@ class AuthschServiceProvider extends ServiceProvider
                 return new BmeProvider(
                     $app->make('request'),
                     $app->make(UrlGenerator::class),
+                    $app->make(Dispatcher::class),
                     $app->make('config')->get('authsch')
                 );
             }
