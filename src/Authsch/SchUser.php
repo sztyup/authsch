@@ -39,11 +39,21 @@ class SchUser
         return $this;
     }
 
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
     public function setRefreshToken($token): SchUser
     {
         $this->refreshToken = $token;
 
         return $this;
+    }
+
+    public function getRefreshToken(): string
+    {
+        return $this->refreshToken;
     }
 
     /**
@@ -66,11 +76,24 @@ class SchUser
 
     public function getField($name)
     {
+        if ($name == 'provider_user_id') {
+            return $this->getId();
+        }
+
         if (!$this->fields->has($name)) {
             throw new InvalidFieldException($name);
         }
 
         return $this->fields->get($name);
+    }
+
+    public function hasField($name)
+    {
+        if ($name == 'provider_user_id') {
+            return true;
+        }
+
+        return $this->fields->has($name);
     }
 
     public function toArray(): array
