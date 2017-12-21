@@ -16,6 +16,10 @@ class AuthschServiceProvider extends ServiceProvider
             __DIR__.'/../config/config.php',
             'authsch'
         );
+
+        $this->loadMigrationsFrom(
+            __DIR__ . '/../migrations'
+        );
     }
 
     public function boot()
