@@ -2,7 +2,7 @@
 
 namespace Sztyup\Authsch\Events;
 
-use Sztyup\Authsch\Model\SchAccount;
+use App\Entities\SchAccount;
 use Sztyup\Authsch\SchUser;
 
 class AuthSchLogin
