@@ -5,9 +5,10 @@ namespace Sztyup\Authsch;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Laravel\Socialite\Two\AbstractProvider;
 use Sztyup\Authsch\Events\AuthSchLogin;
-use Sztyup\Authsch\Model\SchAccount;
+use App\Entities\SchAccount;
 
 class SchProvider extends AbstractProvider
 {
@@ -18,6 +19,10 @@ class SchProvider extends AbstractProvider
 
     public function __construct(Request $request, UrlGenerator $router, Dispatcher $dispatcher, array $config)
     {
+        if (in_array('niifPersonOrgID', $config['scopes']) && app()->isLocal()) {
+            Arr::forget($config['scopes'], 'niifPersonOrgID');
+        }
+
         $this->setScopes(array_merge(['basic'], $config['scopes']));
 
         $this->dispatcher = $dispatcher;
