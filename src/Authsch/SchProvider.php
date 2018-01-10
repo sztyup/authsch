@@ -73,7 +73,7 @@ class SchProvider extends AbstractProvider
                 continue;
             }
 
-            $shacc = SchAccount::where([$field, $user->getField($field)])->first();
+            $shacc = SchAccount::where([$field => $user->getField($field)])->first();
 
             if ($shacc) {
                 return $shacc;
