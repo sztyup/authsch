@@ -66,14 +66,15 @@ class SchProvider extends AbstractProvider
         ];
 
         foreach ($matchFields as $field) {
-            if (!$user->hasField($field)) {
-                continue;
-            }
             if ($user->getField($field) == null || empty($user->getField($field))) {
                 continue;
             }
 
-            $shacc = SchAccount::where([$field => $user->getField($field)])->first();
+            try {
+                $shacc = SchAccount::where([$field => $user->getField($field)])->first();
+            } catch (\Exception $exception) {
+                continue;
+            }
 
             if ($shacc) {
                 return $shacc;
