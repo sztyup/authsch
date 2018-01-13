@@ -66,7 +66,7 @@ class SchProvider extends AbstractProvider
         ];
 
         foreach ($matchFields as $field) {
-            if ($user->getField($field) == null || empty($user->getField($field))) {
+            if (!$user->hasField($field) || $user->getField($field) == null || empty($user->getField($field))) {
                 continue;
             }
 
