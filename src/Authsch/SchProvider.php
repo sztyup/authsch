@@ -7,8 +7,6 @@ use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Laravel\Socialite\Two\AbstractProvider;
-use Sztyup\Authsch\Events\AuthSchLogin;
-use App\Entities\SchAccount;
 
 class SchProvider extends AbstractProvider
 {
@@ -42,46 +40,6 @@ class SchProvider extends AbstractProvider
         } else {
             return $router->route($config);
         }
-    }
-
-    public function user()
-    {
-        /** @var SchUser $user */
-        $user = parent::user();
-
-        $shacc = $this->shaccFromUser($user);
-
-        $this->dispatcher->dispatch(new AuthSchLogin($user, $shacc));
-
-        return $shacc;
-    }
-
-    protected function shaccFromUser(SchUser $user)
-    {
-        $matchFields = [
-            'provider_user_id',
-            'schacc',
-            'neptun',
-            'bme_id'
-        ];
-
-        foreach ($matchFields as $field) {
-            if (!$user->hasField($field) || $user->getField($field) == null || empty($user->getField($field))) {
-                continue;
-            }
-
-            try {
-                $shacc = SchAccount::where([$field => $user->getField($field)])->first();
-            } catch (\Exception $exception) {
-                continue;
-            }
-
-            if ($shacc) {
-                return $shacc;
-            }
-        }
-
-        return SchAccount::create($user->toArray());
     }
 
     protected function getAuthUrl($state)
