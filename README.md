@@ -1,7 +1,7 @@
 ## Authsch provider for Laravel
-<p align="center">
-<a href="https://travis-ci.org/sztyup/authsch"><img src="https://travis-ci.org/sztyup/authsch.svg" alt="Build Status"></a>
-</p>
+
+[![StyleCI](https://styleci.io/repos/93679617/shield?branch=master)](https://styleci.io/repos/93679617)
+[![Build Status](https://travis-ci.org/sztyup/authsch.svg?branch=master)](https://travis-ci.org/sztyup/authsch)
 
 ### Installation
 
