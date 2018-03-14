@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Socialite\Contracts\Factory;
 
 class AuthschServiceProvider extends ServiceProvider
 {
@@ -27,7 +28,7 @@ class AuthschServiceProvider extends ServiceProvider
             __DIR__ . '/../config/config.php' => config_path('authsch.php')
         ], 'config');
 
-        $socialite = $this->app->make('Laravel\Socialite\Contracts\Factory');
+        $socialite = $this->app->make(Factory::class);
         $socialite->extend(
             'authsch',
             function (Container $app) {
