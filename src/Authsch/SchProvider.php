@@ -123,6 +123,8 @@ class SchProvider extends AbstractProvider
             } else {
                 $result->setField('bme_status', SchUser::BME_STATUS_NONE);
             }
+        } else {
+            $result->setField('bme_status', SchUser::BME_STATUS_NONE);
         }
 
         return $result;
