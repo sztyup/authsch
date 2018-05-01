@@ -4,12 +4,39 @@ namespace Sztyup\Authsch\Contracts;
 
 interface UserInterface
 {
-    public function getUserId(): int;
-    public function setUserId(int $id): UserInterface;
+    /**
+     * @return mixed
+     */
+    public function getUser();
 
+    /**
+     * @param $id
+     *
+     * @return static
+     */
+    public function setUser($id);
+
+    /**
+     * @return string
+     */
     public function getEmail(): string;
-    public function setEmail(string $email): UserInterface;
 
+    /**
+     * @param string $email
+     *
+     * @return static
+     */
+    public function setEmail(string $email);
+
+    /**
+     * @return string
+     */
     public function getName(): string;
-    public function setName(string $name): UserInterface;
+
+    /**
+     * @param string $name
+     *
+     * @return static
+     */
+    public function setName(string $name);
 }
