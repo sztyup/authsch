@@ -132,7 +132,7 @@ class SchProvider extends AbstractProvider
 
         $return->id = $user['internal_id'];
         $return->name = $result['name'];
-        $return->email = $return['email'];
+        $return->email = $result['email'];
         $return->setRaw($result);
 
         return $return;
