@@ -16,10 +16,10 @@ class SchProvider extends AbstractProvider
     /** @var  Dispatcher */
     private $dispatcher;
 
-    public function __construct(Request $request, UrlGenerator $router, Dispatcher $dispatcher, array $config)
+    public function __construct(Request $request, UrlGenerator $router, Dispatcher $dispatcher, array $config, bool $local)
     {
-        if (in_array('niifPersonOrgID', $config['scopes']) && app()->isLocal()) {
-            Arr::forget($config['scopes'], 'niifPersonOrgID');
+        if (in_array('niifPersonOrgID', $config['scopes']) && $local) {
+            Arr::forget($config['scopes'], array_search('niifPersonOrgID', $config['scopes']));
         }
 
         $this->setScopes(array_merge(['basic'], $config['scopes']));
