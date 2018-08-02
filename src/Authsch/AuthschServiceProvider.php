@@ -37,7 +37,7 @@ class AuthschServiceProvider extends ServiceProvider
                     $app->make(UrlGenerator::class),
                     $app->make(Dispatcher::class),
                     $app->make('config')->get('authsch'),
-                    $app->isLocal()
+                    $app->environment() != 'production'
                 );
             }
         );
@@ -50,7 +50,7 @@ class AuthschServiceProvider extends ServiceProvider
                     $app->make(UrlGenerator::class),
                     $app->make(Dispatcher::class),
                     $app->make('config')->get('authsch'),
-                    $app->isLocal()
+                    $app->environment() != 'production'
                 );
             }
         );
