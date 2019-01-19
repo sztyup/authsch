@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\User;
+use Sztyup\Authsch\Exceptions\AuthschException;
 
 class SchProvider extends AbstractProvider
 {
@@ -71,6 +72,21 @@ class SchProvider extends AbstractProvider
         $user = json_decode($response->getBody(), true);
 
         return $user;
+    }
+
+    /**
+     * @param string $code
+     *
+     * @return array
+     * @throws AuthschException
+     */
+    public function getAccessTokenResponse($code)
+    {
+        if (empty($code)) {
+            throw new AuthschException($this->request->query->get('error_description'));
+        }
+
+        return parent::getAccessTokenResponse($code);
     }
 
     protected function mapUserToObject(array $user)
