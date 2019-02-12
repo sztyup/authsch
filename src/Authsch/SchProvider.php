@@ -17,6 +17,9 @@ class SchProvider extends AbstractProvider
     /** @var  Dispatcher */
     private $dispatcher;
 
+    /** @var string */
+    protected $base;
+
     public function __construct(Request $request, UrlGenerator $router, Dispatcher $dispatcher, array $config, bool $local)
     {
         if (in_array('niifPersonOrgID', $config['scopes']) && $local) {
@@ -26,6 +29,8 @@ class SchProvider extends AbstractProvider
         $this->setScopes(array_merge(['basic'], $config['scopes']));
 
         $this->dispatcher = $dispatcher;
+
+        $this->base = $config['driver']['base'];
 
         parent::__construct(
             $request,
@@ -46,12 +51,12 @@ class SchProvider extends AbstractProvider
 
     protected function getAuthUrl($state)
     {
-        return $this->buildAuthUrlFromBase('https://auth.sch.bme.hu/site/login', $state);
+        return $this->buildAuthUrlFromBase($this->base . '/site/login', $state);
     }
 
     protected function getTokenUrl()
     {
-        return 'https://auth.sch.bme.hu/oauth2/token';
+        return $this->base . '/oauth2/token';
     }
 
     protected function getTokenFields($code)
@@ -65,7 +70,7 @@ class SchProvider extends AbstractProvider
 
     protected function getUserByToken($token)
     {
-        $userUrl = 'https://auth.sch.bme.hu/api/profile?access_token=' . $token;
+        $userUrl = $this->base . '/api/profile?access_token=' . $token;
 
         $response = $this->getHttpClient()->get($userUrl);
 
