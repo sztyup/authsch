@@ -3,8 +3,8 @@
 return [
     'driver' => [
         'base' => 'https://auth.sch.bme.hu',
-        'client_id' => env("AUTHSCH_CLIENT_ID"),
-        'client_secret' => env("AUTHSCH_CLIENT_SECRET"),
+        'client_id' => env('AUTHSCH_CLIENT_ID'),
+        'client_secret' => env('AUTHSCH_CLIENT_SECRET'),
         'redirect' => 'authsch.callback' // Route where a callback route is found
     ],
 

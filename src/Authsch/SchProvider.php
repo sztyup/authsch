@@ -9,6 +9,7 @@ use Illuminate\Support\Arr;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\User;
 use Sztyup\Authsch\Exceptions\AuthschException;
+use Sztyup\Authsch\Exceptions\NoEmailException;
 
 class SchProvider extends AbstractProvider
 {
@@ -78,6 +79,13 @@ class SchProvider extends AbstractProvider
 
         return $user;
     }
+    
+    public function forceRefresh($token)
+    {
+        $userUrl = $this->base . '/api/profile/resync?access_token=' . $token;
+
+        $this->getHttpClient()->get($userUrl);
+    }
 
     /**
      * @param string $code
@@ -94,7 +102,13 @@ class SchProvider extends AbstractProvider
         return parent::getAccessTokenResponse($code);
     }
 
-    protected function mapUserToObject(array $user)
+    /**
+     * @param array $user
+     *
+     * @return User
+     * @throws NoEmailException
+     */
+    protected function mapUserToObject(array $user): User
     {
         $result = [];
 
@@ -134,13 +148,13 @@ class SchProvider extends AbstractProvider
         }
 
         if (isset($user['bmeunitscope'])) {
-            if (in_array('BME_VIK_NEWBIE', $user['bmeunitscope'])) {
+            if (in_array('BME_VIK_NEWBIE', $user['bmeunitscope'], true)) {
                 $result['bme_status'] = SchUser::BME_STATUS_NEWBIE;
-            } elseif (in_array('BME_VIK_ACTIVE', $user['bmeunitscope'])) {
+            } elseif (in_array('BME_VIK_ACTIVE', $user['bmeunitscope'], true)) {
                 $result['bme_status'] = SchUser::BME_STATUS_VIK_ACTIVE;
-            } elseif (in_array('BME_VIK', $user['bmeunitscope'])) {
+            } elseif (in_array('BME_VIK', $user['bmeunitscope'], true)) {
                 $result['bme_status'] = SchUser::BME_STATUS_VIK_PASSIVE;
-            } elseif (in_array('BME', $user['bmeunitscope'])) {
+            } elseif (in_array('BME', $user['bmeunitscope'], true)) {
                 $result['bme_status'] = SchUser::BME_STATUS_BME;
             } else {
                 $result['bme_status'] = SchUser::BME_STATUS_NONE;
@@ -155,6 +169,10 @@ class SchProvider extends AbstractProvider
         $return->name = $result['name'];
         $return->email = $result['email'];
         $return->setRaw($result);
+
+        if (empty($return->email)) {
+            throw new NoEmailException($return);
+        }
 
         return $return;
     }
