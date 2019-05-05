@@ -2,7 +2,6 @@
 
 namespace Sztyup\Authsch;
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -15,21 +14,16 @@ class SchProvider extends AbstractProvider
 {
     protected $scopeSeparator = ' ';
 
-    /** @var  Dispatcher */
-    private $dispatcher;
-
     /** @var string */
     protected $base;
 
-    public function __construct(Request $request, UrlGenerator $router, Dispatcher $dispatcher, array $config, bool $local)
+    public function __construct(Request $request, UrlGenerator $router, array $config, bool $local)
     {
-        if (in_array('niifPersonOrgID', $config['scopes']) && $local) {
-            Arr::forget($config['scopes'], array_search('niifPersonOrgID', $config['scopes']));
+        if ($local && in_array('niifPersonOrgID', $config['scopes'], true)) {
+            Arr::forget($config['scopes'], array_search('niifPersonOrgID', $config['scopes'], true));
         }
 
         $this->setScopes(array_merge(['basic'], $config['scopes']));
-
-        $this->dispatcher = $dispatcher;
 
         $this->base = $config['driver']['base'];
 
@@ -75,9 +69,7 @@ class SchProvider extends AbstractProvider
 
         $response = $this->getHttpClient()->get($userUrl);
 
-        $user = json_decode($response->getBody(), true);
-
-        return $user;
+        return json_decode($response->getBody(), true);
     }
     
     public function forceRefresh($token)
@@ -134,6 +126,14 @@ class SchProvider extends AbstractProvider
         if (isset($user['linkedAccounts'])) {
             if (isset($user['linkedAccounts']['schacc'])) {
                 $result['schacc'] = $user['linkedAccounts']['schacc'];
+            }
+
+            if (isset($user['linkedAccounts']['vir'])) {
+                $result['vir'] = $user['linkedAccounts']['vir'];
+            }
+
+            if (isset($user['linkedAccounts']['virUid'])) {
+                $result['virUid'] = $user['linkedAccounts']['virUid'];
             }
 
             if (isset($user['linkedAccounts']['bme'])) {

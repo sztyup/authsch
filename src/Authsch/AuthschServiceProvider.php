@@ -35,9 +35,8 @@ class AuthschServiceProvider extends ServiceProvider
                 return new SchProvider(
                     $app->make('request'),
                     $app->make(UrlGenerator::class),
-                    $app->make(Dispatcher::class),
                     $app->make('config')->get('authsch'),
-                    $app->environment() != 'production'
+                    $app->environment() !== 'production'
                 );
             }
         );
@@ -48,9 +47,8 @@ class AuthschServiceProvider extends ServiceProvider
                 return new BmeProvider(
                     $app->make('request'),
                     $app->make(UrlGenerator::class),
-                    $app->make(Dispatcher::class),
                     $app->make('config')->get('authsch'),
-                    $app->environment() != 'production'
+                    $app->environment() !== 'production'
                 );
             }
         );
