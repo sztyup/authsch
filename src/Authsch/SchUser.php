@@ -14,7 +14,7 @@ class SchUser
 
     protected $fields;
 
-	const BME_STATUS_VBK_NEWBIE = 5;
+    const BME_STATUS_VBK_NEWBIE = 5;
     const BME_STATUS_NEWBIE = 4;
     const BME_STATUS_VIK_ACTIVE = 3;
     const BME_STATUS_VIK_PASSIVE = 2;
