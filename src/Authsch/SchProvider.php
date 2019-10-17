@@ -148,9 +148,9 @@ class SchProvider extends AbstractProvider
         }
 
         if (isset($user['bmeunitscope'])) {
-        	if (in_array('BME_VIK_NEWBIE', $user['bmeunitscope'], true)) {
-				$result['bme_status'] = SchUser::BME_STATUS_VIK_NEWBIE;
-			} elseif (in_array('BME_VBK_NEWBIE', $user['bmeunitscope'], true)) {
+            if (in_array('BME_VIK_NEWBIE', $user['bmeunitscope'], true)) {
+                $result['bme_status'] = SchUser::BME_STATUS_VIK_NEWBIE;
+            } elseif (in_array('BME_VBK_NEWBIE', $user['bmeunitscope'], true)) {
                 $result['bme_status'] = SchUser::BME_STATUS_VBK_NEWBIE;
             } elseif (in_array('BME_NEWBIE', $user['bmeunitscope'], true)) {
                 $result['bme_status'] = SchUser::BME_STATUS_BME_NEWBIE;
